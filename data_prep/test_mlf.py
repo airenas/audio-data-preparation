@@ -1,28 +1,19 @@
-import unittest
-
-import mlf
+from data_prep import mlf
 
 
-class TestMlf(unittest.TestCase):
-
-    def test_create(self):
-        self.assertEqual("   8600000    9100000 p pa padėkojo / //",
-                         mlf.from_str("   8600000    9100000 p pa padėkojo / //").str())
-        self.assertEqual("   8600000    9100000 p pa padėkojo / //",
-                         mlf.from_str("   8600000    9100000 p pa padėkojo / //").str())
-        self.assertEqual("   8600000    9100000 p pa padėkojo",
-                         mlf.from_str("   8600000    9100000 p pa padėkojo").str())
-
-    def test_is_word(self):
-        ml = mlf.from_str("   8600000    9100000 p pa padėkojo")
-        self.assertTrue(ml.is_word())
-        ml = mlf.from_str("   7500000    8600000 sil sp sp")
-        self.assertFalse(ml.is_word())
-
-    def test_punct(self):
-        ml = mlf.from_str("   2500000    4000000 ^a: a Ačiū / //     ,")
-        self.assertEqual(",", ml.punct)
+def test_create():
+    assert "   8600000    9100000 p pa padėkojo / //" == mlf.from_str("   8600000    9100000 p pa padėkojo / //").str()
+    assert "   8600000    9100000 p pa padėkojo / //" == mlf.from_str("   8600000    9100000 p pa padėkojo / //").str()
+    assert "   8600000    9100000 p pa padėkojo" == mlf.from_str("   8600000    9100000 p pa padėkojo").str()
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_is_word():
+    ml = mlf.from_str("   8600000    9100000 p pa padėkojo")
+    assert ml.is_word()
+    ml = mlf.from_str("   7500000    8600000 sil sp sp")
+    assert ml.is_word() == False
+
+
+def test_punct():
+    ml = mlf.from_str("   2500000    4000000 ^a: a Ačiū / //     ,")
+    assert "," == ml.punct

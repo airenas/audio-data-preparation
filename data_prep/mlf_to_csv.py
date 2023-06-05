@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-import mlf
+from data_prep import mlf
 
 
 class LastData:

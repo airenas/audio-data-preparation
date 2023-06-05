@@ -1,26 +1,20 @@
-import unittest
-
-import mlf_to_csv
+from data_prep import mlf_to_csv
 
 
-class TestLattToText(unittest.TestCase):
-    def get_phones(self, initial, punct, skip):
-        d = mlf_to_csv.LastData()
-        d.punct = punct
-        d.phones = initial
-        phones = []
-        d.add_to(phones, skip)
-        return phones
-
-    def test_add_punct(self):
-        self.assertEqual(["a"], self.get_phones(["a"], "", False))
-        self.assertEqual(["a", ",", "sp"], self.get_phones(["a", "sp"], ",", False))
-        self.assertEqual(["a", ","], self.get_phones(["a", "sp"], ",", True))
-        self.assertEqual(["a", ",", "sil"], self.get_phones(["a", "sil"], ",", True))
-        self.assertEqual(["a", "sp"], self.get_phones(["a", "sp"], "", True))
-        self.assertEqual(["a", "sp", "b", ","], self.get_phones(["a", "sp", "b", "sp"], ",", True))
-        self.assertEqual(["a", "sp", "b", "sp"], self.get_phones(["a", "sp", "b", "sp"], "", True))
+def get_phones(initial, punct, skip):
+    d = mlf_to_csv.LastData()
+    d.punct = punct
+    d.phones = initial
+    phones = []
+    d.add_to(phones, skip)
+    return phones
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_add_punct():
+    assert ["a"] == get_phones(["a"], "", False)
+    assert ["a", ",", "sp"] == get_phones(["a", "sp"], ",", False)
+    assert ["a", ","] == get_phones(["a", "sp"], ",", True)
+    assert ["a", ",", "sil"] == get_phones(["a", "sil"], ",", True)
+    assert ["a", "sp"] == get_phones(["a", "sp"], "", True)
+    assert ["a", "sp", "b", ","] == get_phones(["a", "sp", "b", "sp"], ",", True)
+    assert ["a", "sp", "b", "sp"] == get_phones(["a", "sp", "b", "sp"], "", True)
