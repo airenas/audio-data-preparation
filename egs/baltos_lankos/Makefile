@@ -6,6 +6,7 @@ wav_gz?=../data/blankos.tgz
 prefix?=BLA
 out_dir?=.data/$(corpus)
 python_dir=${CURDIR}/../../data_prep
+python_cmd=PYTHONPATH=../../ python
 MAX_LINES?=1000000000
 wav_dir=.wav
 
@@ -39,29 +40,29 @@ ${out_dir}/extracted/utf.mlf: ${out_dir}/extracted/initial.mlf | ${out_dir}/lab
 	touch $@
 ############################################
 ${out_dir}/extracted/fixed.mlf: ${out_dir}/extracted/utf.mlf | ${out_dir}/lab
-	pv $^ | python $(python_dir)/exclude_files.py --exclude "$(exclude)" \
-		| python $(python_dir)/fix_mlf.py \
-		| python $(python_dir)/change_name.py --prefix '$(prefix)_' > $@
+	pv $^ | $(python_cmd) $(python_dir)/exclude_files.py --exclude "$(exclude)" \
+		| $(python_cmd) $(python_dir)/fix_mlf.py \
+		| $(python_cmd) $(python_dir)/change_name.py --prefix '$(prefix)_' > $@
 ############################################
 ${out_dir}/extracted/fixed.split.mlf: ${out_dir}/extracted/fixed.mlf ${out_dir}/range/.done
-	pv ${out_dir}/extracted/fixed.mlf | python $(python_dir)/mlf_by_range.py --rangeDir ${out_dir}/range > $@_
+	pv ${out_dir}/extracted/fixed.mlf | $(python_cmd) $(python_dir)/mlf_by_range.py --rangeDir ${out_dir}/range > $@_
 	mv $@_ $@
 ############################################
 ${out_dir}/lab/.done: ${out_dir}/extracted/fixed.mlf | ${out_dir}/lab
-	pv $^ | python  $(python_dir)/split_mlf.py --outDir `dirname $@`
+	pv $^ | $(python_cmd)  $(python_dir)/split_mlf.py --outDir `dirname $@`
 	touch $@
 ############################################
 ${out_dir}/range/.done: ${out_dir}/lab/.done | ${out_dir}/range
 	ls -1 ${out_dir}/lab/*.lab | xargs -n1 -I {} -P 4 sh -c \
 		'base=`basename {} .lab`; \
-		cat {} | python $(python_dir)/mlf_to_range.py --maxSil 400 > ${out_dir}/range/$${base}.split.range'
+		cat {} | $(python_cmd) $(python_dir)/mlf_to_range.py --maxSil 400 > ${out_dir}/range/$${base}.split.range'
 	touch $@
 ############################################
 ${out_dir}/wav/split.sh: ${out_dir}/range/.done | ${out_dir}/wav
 	rm -f $@_
 	ls -1 ${out_dir}/range/*.range | xargs -n1 -I {} sh -c \
 		'base=`basename {} .split.range`; \
-		cat {} | python $(python_dir)/range_to_split_sh.py --name $${base} --inDir $(wav_dir)/wav --outDir $(out_dir)/wav >> $@_'
+		cat {} | $(python_cmd) $(python_dir)/range_to_split_sh.py --name $${base} --inDir $(wav_dir)/wav --outDir $(out_dir)/wav >> $@_'
 	mv $@_ $@	
 	chmod +x $@
 ############################################
@@ -70,21 +71,21 @@ ${out_dir}/wav/.done: ${out_dir}/wav/split.sh $(wav_dir)/.wav.done
 	touch ${out_dir}/wav/.done
 ############################################
 ${out_dir}/extracted/metadata.csv: ${out_dir}/extracted/fixed.split.mlf
-	pv $< | python $(python_dir)/mlf_to_csv.py --outputPhones --skipSP > $@_
+	pv $< | $(python_cmd) $(python_dir)/mlf_to_csv.py --outputPhones --skipSP > $@_
 	mv $@_ $@
 $(out_dir)/$(corpus)/metadata.csv: ${out_dir}/extracted/metadata.csv | $(out_dir)/$(corpus)
 	pv $< | sed '/noise/d' | sort > $@_
 	mv $@_ $@
 $(out_dir)/$(corpus)/durations: ${out_dir}/extracted/fixed.split.mlf ${out_dir}/extracted/audio.samples \
 	${out_dir}/extracted/exclude.files | $(out_dir)/$(corpus)
-	pv $< | python $(python_dir)/exclude_files.py --excludeFromFile ${out_dir}/extracted/exclude.files \
-		| python $(python_dir)/mlf_to_durations.py --shift 256 --freq 22050 --samplesFile ${out_dir}/extracted/audio.samples \
+	pv $< | $(python_cmd) $(python_dir)/exclude_files.py --excludeFromFile ${out_dir}/extracted/exclude.files \
+		| $(python_cmd) $(python_dir)/mlf_to_durations.py --shift 256 --freq 22050 --samplesFile ${out_dir}/extracted/audio.samples \
 		| sort > $@_
 	mv $@_ $@
 
 ############################################
 ${out_dir}/extracted/audio.samples: $(out_dir)/$(corpus)/wavs/.done
-	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | sort | pv | python $(python_dir)/audio_to_samples.py > $@_
+	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | sort | pv | $(python_cmd) $(python_dir)/audio_to_samples.py > $@_
 	mv $@_ $@
 ############################################
 ${out_dir}/extracted/exclude.files: ${out_dir}/extracted/metadata.csv
@@ -120,9 +121,9 @@ $(out_dir)/$(corpus).tar.gz: $(out_dir)/$(corpus)/wavs/.done $(out_dir)/$(corpus
 
 ############################################
 test/durations: $(out_dir)/$(corpus)/durations
-	cat $< | python $(python_dir)/long_durations.py --duration 150
+	cat $< | $(python_cmd) $(python_dir)/long_durations.py --duration 150
 test/corpus-len: $(out_dir)/$(corpus)/wavs/.done
-	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | xargs -n1 soxi -D | python -c "import sys; print(sum(float(x) for x in sys.stdin)/3600)"
+	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | xargs -n1 soxi -D | $(python_cmd) -c "import sys; print(sum(float(x) for x in sys.stdin)/3600)"
 
 $(bin):
 	mkdir -p $(bin)
