@@ -2,7 +2,7 @@ import argparse
 import re
 import sys
 
-import mlf
+from data_prep import mlf
 
 
 def ignore(line):
@@ -51,7 +51,8 @@ def parse_line(line):
 
 
 def fix_symbols(line):
-    return line.replace("�", "-").replace("–", "-").replace("—", "-").replace("<\">", "").replace("<„>", "").replace("<“>", "")
+    return line.replace("�", "-").replace("–", "-").replace("—", "-").replace("<\">", "").replace("<„>", "").replace(
+        "<“>", "")
 
 
 def fix_sil(lines):
