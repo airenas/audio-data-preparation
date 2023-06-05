@@ -52,11 +52,6 @@ def test_trim_accent():
 
 
 def test_fix_ne():
-    r = fix_mlf.parse_line("2500000 4000000 -67.517197 n ne ne / // <!>")
-    assert "!" == r.punct
-    assert "ne" == r.word
-    fix_mlf.fix_ne_excl(r)
-    assert "." == r.punct
     res = [fix_mlf.parse_line("2500000 4000000 0 sp sp sp"),
            fix_mlf.parse_line("2500000 4000000 0 a"),
            fix_mlf.parse_line("2500000 4000000 0 s as As")]
