@@ -8,6 +8,7 @@ out_dir?=.data/$(corpus)
 python_dir=${CURDIR}/../../data_prep
 python_cmd=PYTHONPATH=../../ python
 MAX_LINES?=1000000000
+target_interval_secs?=0
 wav_dir=.wav
 
 bin=$(shell pwd)/bin
@@ -55,7 +56,7 @@ ${out_dir}/lab/.done: ${out_dir}/extracted/fixed.mlf | ${out_dir}/lab
 ${out_dir}/range/.done: ${out_dir}/lab/.done | ${out_dir}/range
 	ls -1 ${out_dir}/lab/*.lab | xargs -n1 -I {} -P 4 sh -c \
 		'base=`basename {} .lab`; \
-		cat {} | $(python_cmd) $(python_dir)/mlf_to_range.py --maxSil 400 > ${out_dir}/range/$${base}.split.range'
+		cat {} | $(python_cmd) $(python_dir)/mlf_to_range.py --maxSil 400 --splitInto $(target_interval_secs) > ${out_dir}/range/$${base}.split.range'
 	touch $@
 ############################################
 ${out_dir}/wav/split.sh: ${out_dir}/range/.done | ${out_dir}/wav

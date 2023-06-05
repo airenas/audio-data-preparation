@@ -2,6 +2,8 @@ import re
 
 regexp = re.compile("\\s")
 
+mlf_millis = 10000
+
 
 def from_str(line):
     from_ = line[:10]

@@ -3,3 +3,4 @@ MAX_LINES?=1000000000000
 corpus?=blankos.v01
 mlf?=../../data/blankos/BLANKOS_utf.mlf
 wav_gz?=../../data/blankos/blankos_WAV22.tgz
+target_interval_secs?=30
