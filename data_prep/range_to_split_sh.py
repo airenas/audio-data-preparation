@@ -16,7 +16,10 @@ def main(argv):
     ranges = range.load_ranges(sys.stdin)
 
     for i, r in enumerate(ranges):
-        print("sox %s/%s.wav %s/lab_%s_%03d.wav trim %f =%f" %
+        print("echo %s/%s.wav trim %f =%f" %
+              (args.inDir, args.name, r.from_ / 10000000, r.to / 10000000),
+              file=sys.stdout)
+        print("sox %s/%s.wav %s/%s_%03d.wav trim %f =%f" %
               (args.inDir, args.name, args.outDir, args.name, i, r.from_ / 10000000, r.to / 10000000),
               file=sys.stdout)
 
