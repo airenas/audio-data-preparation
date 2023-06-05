@@ -161,3 +161,4 @@ cython_debug/
 data/**
 egs/baltos_lankos/.wav/
 egs/baltos_lankos/.data/
+.idea/
