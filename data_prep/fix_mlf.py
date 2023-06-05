@@ -97,14 +97,6 @@ def fix_lines(lines):
     return res
 
 
-def fix_ne_excl(ml):
-    if ml.word == "ne" and ml.punct == "!":
-        ml.punct = "."
-    if ml.word == "keiks" and ml.punct == "!":
-        ml.punct = "."
-    if ml.word == "gulėtumėt" and ml.punct == "!":
-        ml.punct = "."
-
 
 def drop_parantheses(ml):
     if ml.punct == ")" or ml.punct == "(":
@@ -133,7 +125,6 @@ def main(argv):
             if ml.punct != "":
                 if mlw is not None:
                     mlw.punct = ml.punct
-                    fix_ne_excl(mlw)
                 else:
                     print("Nowhere to add punct " + line, file=sys.stderr)
                 mlw = None
