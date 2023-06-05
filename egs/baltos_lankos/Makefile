@@ -85,7 +85,7 @@ $(out_dir)/$(corpus)/durations: ${out_dir}/extracted/fixed.split.mlf ${out_dir}/
 
 ############################################
 ${out_dir}/extracted/audio.samples: $(out_dir)/$(corpus)/wavs/.done
-	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | sort | pv | $(python_cmd) $(python_dir)/audio_to_samples.py > $@_
+	find $(out_dir)/$(corpus)/wavs -name "*.wav" | sort | pv | $(python_cmd) $(python_dir)/audio_to_samples.py > $@_
 	mv $@_ $@
 ############################################
 ${out_dir}/extracted/exclude.files: ${out_dir}/extracted/metadata.csv
@@ -106,11 +106,8 @@ $(wav_dir)/.wav.done: $(wav_dir)/.wav.extracted
 $(out_dir)/$(corpus)/wavs/.done: ${out_dir}/extracted/initial.mlf ${out_dir}/wav/.done ${out_dir}/extracted/exclude.files | $(out_dir)/$(corpus)/wavs
 	for wav in ${out_dir}/wav/*.wav; do \
 		base=`basename $${wav} .wav`; \
-		base=$$(echo $${base} | sed s/lab_//g); \
-		echo "Copy wav $${base}"; \
+		echo "Copy $${wav}"; \
 		cp $${wav} $(out_dir)/$(corpus)/wavs/$${base}.wav; \
-		# echo "Converting WAV to 22050 Hz 16 bit for $${base}"; \
-		# sox $${wav} -r 22050 -b 16 $(out_dir)/$(corpus)/wavs/$${base}.wav; \
 	done
 	echo "Drop exluded files"
 	cat ${out_dir}/extracted/exclude.files | xargs -n 1 -I {} sh -c 'rm $(out_dir)/$(corpus)/wavs/{}.wav'
@@ -123,7 +120,7 @@ $(out_dir)/$(corpus).tar.gz: $(out_dir)/$(corpus)/wavs/.done $(out_dir)/$(corpus
 test/durations: $(out_dir)/$(corpus)/durations
 	cat $< | $(python_cmd) $(python_dir)/long_durations.py --duration 150
 test/corpus-len: $(out_dir)/$(corpus)/wavs/.done
-	ls -1 $(out_dir)/$(corpus)/wavs/*.wav | xargs -n1 soxi -D | $(python_cmd) -c "import sys; print(sum(float(x) for x in sys.stdin)/3600)"
+	find $(out_dir)/$(corpus)/wavs -name "*.wav" | xargs -n1 soxi -D | $(python_cmd) -c "import sys; print(sum(float(x) for x in sys.stdin)/3600)"
 
 $(bin):
 	mkdir -p $(bin)
