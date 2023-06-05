@@ -69,7 +69,7 @@ def main(argv):
             ld.add_to(phones, args.skipSP)
             write_line(name, words, phones, sys.stdout)
             name = s_line.strip('""').replace(".lab", "")
-            words, phones, lp = [], [], ""
+            words, phones = [], []
         elif s_line == ".":
             continue
         else:

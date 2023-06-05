@@ -57,9 +57,6 @@ def test_fix_ne():
     assert "ne" == r.word
     fix_mlf.fix_ne_excl(r)
     assert "." == r.punct
-
-
-def test_fix_ne():
     res = [fix_mlf.parse_line("2500000 4000000 0 sp sp sp"),
            fix_mlf.parse_line("2500000 4000000 0 a"),
            fix_mlf.parse_line("2500000 4000000 0 s as As")]

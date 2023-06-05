@@ -11,6 +11,7 @@ def get_fn(line):
     return line.lstrip("\"").rstrip("\"").replace(".lab", "")
 
 
+# flake8: noqa: C901
 def main(argv):
     parser = argparse.ArgumentParser(description="Excludes provided files",
                                      epilog="E.g. cat input.mlf | " + sys.argv[0] + " > result.mlf",
@@ -26,11 +27,11 @@ def main(argv):
         regexp = re.compile("\\s+")
         strs = regexp.split(args.exclude)
         es = set(strs)
-    elif args.excludeFromFile:    
+    elif args.excludeFromFile:
         with open(args.excludeFromFile) as file:
             for line in file:
                 es.add(line.rstrip())
-        print("Will exclude from %s %d items" % (args.excludeFromFile, len(es)), file=sys.stderr)        
+        print("Will exclude from %s %d items" % (args.excludeFromFile, len(es)), file=sys.stderr)
 
     fc = 0
     ec = 0

@@ -1,13 +1,13 @@
 import argparse
-import sys
 import os
+import sys
 
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Splits mlf to many files",
                                      epilog="E.g. cat input.mlf | " + sys.argv[0] + "",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--outDir", default='', type=str, help="Output directory", required=True)                                     
+    parser.add_argument("--outDir", default='', type=str, help="Output directory", required=True)
     args = parser.parse_args(args=argv)
 
     print("Starting", file=sys.stderr)
@@ -23,8 +23,8 @@ def main(argv):
         elif sLine.startswith("\""):
             fc += 1
             fn = os.path.join(args.outDir, sLine.strip('""'))
-            print("Writing: %s" % fn , file=sys.stderr)
-            file = open(fn ,'w')
+            print("Writing: %s" % fn, file=sys.stderr)
+            file = open(fn, 'w')
         elif sLine == ".":
             file.close()
             file = None

@@ -24,6 +24,7 @@ def fix_phone(line):
 regexp = re.compile("\\s+")
 
 
+# flake8: noqa: C901
 def parse_line(line):
     strs = regexp.split(line)
     strs[0] = strs[0].rjust(10, ' ')
@@ -114,7 +115,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Fix mlf file for hts",
                                      epilog="E.g. cat input.mlf | " + sys.argv[0] + " > result.mlf",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    args = parser.parse_args(args=argv)
+    _ = parser.parse_args(args=argv)
 
     print("Starting", file=sys.stderr)
 

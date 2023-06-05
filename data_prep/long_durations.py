@@ -16,8 +16,8 @@ def main(argv):
     for d in sys.stdin.readlines():
         i += 1
         words = d.split()
-        l = [k for k in words[1:]]
-        il = [int(k) for k in l]
+        la = [k for k in words[1:]]
+        il = [int(k) for k in la]
         gt = [k for k in il if k > args.duration]
         if len(gt) > 0:
             p += 1

@@ -9,7 +9,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Extract audio samples from file list",
                                      epilog="E.g. ls -1 *.wav | " + sys.argv[0] + " > audio.samples",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    args = parser.parse_args(args=argv)
+    _ = parser.parse_args(args=argv)
 
     print("Starting", file=sys.stderr)
     lc = 0
