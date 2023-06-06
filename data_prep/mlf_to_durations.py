@@ -44,6 +44,9 @@ def calc_duration(to, fr, shift, freq):
 def fix_duration(v, v_max, shift):
     if v * shift <= v_max:
         return 1
+    intervals = v_max / shift
+    if (intervals + 1) < v:
+        return int(intervals) + 1 - v
     return 0
 
 
@@ -96,8 +99,11 @@ def main(argv):
         elif s_line.startswith("\""):
             if name != "":
                 ld.add_to(durations)
-                durations[-1] += fix_duration(lf, samples[name], args.shift)
+                df = fix_duration(lf, samples[name], args.shift)
+                durations[-1] += df
                 write_line(name, durations, sys.stdout)
+                if df < 0:
+                    print("Fix last interval {}, minus {}".format(name, df), file=sys.stderr)
             name = s_line.strip('""').replace(".lab", "")
             durations, lf = [], 0
         elif s_line == ".":
@@ -113,8 +119,11 @@ def main(argv):
             ld.last_phone = m_line.ph
 
     ld.add_to(durations)
-    durations[-1] += fix_duration(lf, samples[name], args.shift)
+    df = fix_duration(lf, samples[name], args.shift)
+    durations[-1] += df
     write_line(name, durations, sys.stdout)
+    if df < 0:
+        print("Fix last interval {}, minus {}".format(name, df), file=sys.stderr)
 
     print("Read %d lines, %d words" % (lc, wc), file=sys.stderr)
     print("Done", file=sys.stderr)
