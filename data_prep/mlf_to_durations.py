@@ -63,6 +63,23 @@ def write_line(name, durations, file):
     print("%s %s 0" % (name, get_dur_str(durations)), file=file)
 
 
+def update_durations(durations, df):
+    if df > 0:
+        durations[-1] += df
+    else:
+        i = len(durations) - 1
+        while df < 0 <= i:
+            v = durations[i]
+            if v + df < 0:
+                durations[i] = 0
+                df += v
+            else:
+                durations[i] += df
+                df = 0
+            i -= 1
+    return durations
+
+
 def main(argv):
     parser = argparse.ArgumentParser(description="Convert mlf to durations for fastspeech2 training",
                                      epilog="E.g. cat input.mlf | " + sys.argv[0] + " > result.mlf",
@@ -100,7 +117,7 @@ def main(argv):
             if name != "":
                 ld.add_to(durations)
                 df = fix_duration(lf, samples[name], args.shift)
-                durations[-1] += df
+                durations = update_durations(durations, df)
                 write_line(name, durations, sys.stdout)
                 if df < 0:
                     print("Fix last interval {}, minus {}".format(name, df), file=sys.stderr)
@@ -120,7 +137,7 @@ def main(argv):
 
     ld.add_to(durations)
     df = fix_duration(lf, samples[name], args.shift)
-    durations[-1] += df
+    durations = update_durations(durations, df)
     write_line(name, durations, sys.stdout)
     if df < 0:
         print("Fix last interval {}, minus {}".format(name, df), file=sys.stderr)

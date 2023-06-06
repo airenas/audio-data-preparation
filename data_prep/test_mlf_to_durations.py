@@ -1,4 +1,5 @@
 from data_prep import mlf_to_durations
+from data_prep.mlf_to_durations import update_durations
 
 
 def test_calc_duration():
@@ -33,3 +34,10 @@ def test_add_durations():
     assert [10, 5] == get_durations([10, 5], "", "sp")
     assert [10, 4] == get_durations([10, 4], "", "sil")
     assert [10, 5, 10, 30] == get_durations([10, 5, 40], ",", "sil")
+
+
+def test_update_durations():
+    assert [10, 5] == update_durations([10, 5], 0)
+    assert [10, 5, 3] == update_durations([10, 5, 2], 1)
+    assert [10, 5, 1] == update_durations([10, 5, 2], -1)
+    assert [10, 3, 0] == update_durations([10, 5, 2], -4)
