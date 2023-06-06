@@ -1,11 +1,11 @@
 # audio-data-preparation
 Data preparation scripts for audio corpus
 
-## Preparation
+## Prepare python env
 
 ```bash
 conda create --name corpus python=3.10
-cobda activate corpus
+conda activate corpus
 make install/req
 ```
 
