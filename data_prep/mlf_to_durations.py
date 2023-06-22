@@ -10,13 +10,13 @@ class LastData:
         self.last_phone = ""
         self.durations = []
 
-    def add_to(self, durations):
+    def add_to(self, durations, duration_for_puct=True):
         if len(self.durations) > 0:
             for d in self.durations[:-1]:
                 durations.append(d)
 
             if self.punct != "":
-                if mlf.is_sil(self.last_phone):
+                if mlf.is_sil(self.last_phone) and duration_for_puct:
                     if self.last_phone == "sil":
                         d = 10
                         if self.durations[-1] < d:
@@ -89,6 +89,7 @@ def main(argv):
     parser.add_argument("--shift", default=256, type=int, help="Shift in points. Used to calculate shift duration",
                         required=True)
     parser.add_argument("--samplesFile", default='', type=str, help="File containing file samples", required=True)
+    parser.add_argument('--dur-for-punct', action=argparse.BooleanOptionalAction)
     args = parser.parse_args(args=argv)
 
     print("Starting", file=sys.stderr)
@@ -115,7 +116,7 @@ def main(argv):
             continue
         elif s_line.startswith("\""):
             if name != "":
-                ld.add_to(durations)
+                ld.add_to(durations, args.dur_for_punct)
                 df = fix_duration(lf, samples[name], args.shift)
                 durations = update_durations(durations, df)
                 write_line(name, durations, sys.stdout)
@@ -128,14 +129,14 @@ def main(argv):
         else:
             m_line = mlf.from_str(line.rstrip())
             if m_line.is_word():
-                ld.add_to(durations)
+                ld.add_to(durations, args.dur_for_punct)
                 ld.punct = m_line.punct
             dl = calc_duration(m_line.to, lf, args.shift, args.freq)
             lf += dl
             ld.durations.append(dl)
             ld.last_phone = m_line.ph
 
-    ld.add_to(durations)
+    ld.add_to(durations, args.dur_for_punct)
     df = fix_duration(lf, samples[name], args.shift)
     durations = update_durations(durations, df)
     write_line(name, durations, sys.stdout)

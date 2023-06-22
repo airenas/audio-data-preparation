@@ -80,10 +80,11 @@ $(out_dir)/$(corpus)/metadata.csv: ${out_dir}/extracted/metadata.csv | $(out_dir
 $(out_dir)/$(corpus)/durations: ${out_dir}/extracted/fixed.split.mlf ${out_dir}/extracted/audio.samples \
 	${out_dir}/extracted/exclude.files | $(out_dir)/$(corpus)
 	pv $< | $(python_cmd) $(python_dir)/exclude_files.py --excludeFromFile ${out_dir}/extracted/exclude.files \
-		| $(python_cmd) $(python_dir)/mlf_to_durations.py --shift 256 --freq 22050 --samplesFile ${out_dir}/extracted/audio.samples \
+		| $(python_cmd) $(python_dir)/mlf_to_durations.py --shift 256 --freq 22050 \
+		        --no-dur-for-punct --samplesFile ${out_dir}/extracted/audio.samples \
 		| sort > $@_
 	mv $@_ $@
-
+prepare/durations: $(out_dir)/$(corpus)/durations
 ############################################
 ${out_dir}/extracted/audio.samples: $(out_dir)/$(corpus)/wavs/.done
 	find $(out_dir)/$(corpus)/wavs -name "*.wav" | sort | pv | $(python_cmd) $(python_dir)/audio_to_samples.py > $@_
