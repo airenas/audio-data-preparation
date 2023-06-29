@@ -16,18 +16,22 @@ class LastData:
                 durations.append(d)
 
             if self.punct != "":
-                if mlf.is_sil(self.last_phone) and duration_for_puct:
+                if mlf.is_sil(self.last_phone):
                     if self.last_phone == "sil":
-                        d = 10
-                        if self.durations[-1] < d:
-                            d = self.durations[-1] - 1
-                        durations.append(d)
-                        durations.append(self.durations[-1] - d)  # add remaining of sil
+                        if duration_for_puct:
+                            d = 10
+                            if self.durations[-1] < d:
+                                d = self.durations[-1] - 1
+                            durations.append(d)
+                            durations.append(self.durations[-1] - d)  # add remaining of sil
+                        else:
+                            durations.append(0)  # add zero for punctuation
+                            durations.append(self.durations[-1])
                     else:
                         durations.append(self.durations[-1])
                 else:
-                    durations.append(self.durations[-1])
                     durations.append(0)  # add zero for punctuation
+                    durations.append(self.durations[-1])
             else:
                 durations.append(self.durations[-1])
         self.punct = ""
